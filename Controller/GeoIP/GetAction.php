@@ -37,9 +37,8 @@ use Fastly\Cdn\Helper\StoreMessage;
 use Fastly\Cdn\Model\Resolver\GeoIP\CountryCodeProviderInterface;
 
 /**
- * Class GetAction
+ * Class GetAction for esi hole
  *
- * @package Fastly\Cdn\Controller\GeoIP
  */
 class GetAction extends Action
 {
@@ -192,9 +191,11 @@ class GetAction extends Action
     }
 
     /**
-     * @param $targetUrl
-     * @param $targetStoreCode
-     * @param $currentStoreCode
+     * GetTargetUrl uenc params modificiations
+     *
+     * @param string $targetUrl
+     * @param string $targetStoreCode
+     * @param string $currentStoreCode
      * @return string
      */
     private function getTargetUrl($targetUrl, $targetStoreCode, $currentStoreCode): string
