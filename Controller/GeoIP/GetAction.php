@@ -18,14 +18,18 @@
  * @copyright   Copyright (c) 2016 Fastly, Inc. (http://www.fastly.com)
  * @license     BSD, see LICENSE_FASTLY_CDN.txt
  */
+
 namespace Fastly\Cdn\Controller\GeoIP;
 
+use Fastly\Cdn\Helper\StoreMessage;
 use Fastly\Cdn\Model\Config;
+use Fastly\Cdn\Model\Resolver\GeoIP\CountryCodeProviderInterface;
+use Magento\Framework\App\Action\Action;
 use Magento\Framework\App\Action\Context;
 use Magento\Framework\App\ResponseInterface;
 use Magento\Framework\Controller\ResultInterface;
-use Magento\Framework\Url\EncoderInterface;
 use Magento\Framework\Url\DecoderInterface;
+use Magento\Framework\Url\EncoderInterface;
 use Magento\Framework\UrlInterface;
 use Magento\Framework\View\Result\Layout;
 use Magento\Framework\View\Result\LayoutFactory;
@@ -155,7 +159,7 @@ class GetAction extends Action
                     $currentStoreCode = $currentStore->getCode();
 
                     $queryParams = [
-                        '___store'      => $targetStoreCode,
+                        '___store' => $targetStoreCode,
                         '___from_store' => $currentStoreCode
                     ];
                     if ($targetUrl) {
@@ -213,10 +217,12 @@ class GetAction extends Action
         $search = '/' . $currentStoreCode . '/';
         $replace = '/' . $targetStoreCode . '/';
 
-        if (strpos($decodedTargetUrl, $search) !== false) {
-            $searchPattern = '/\/' . $currentStoreCode . '\//';
-            $targetUrl = $this->urlEncoder->encode(preg_replace($searchPattern, $replace, $decodedTargetUrl, 1));
-            return explode('%', $targetUrl)[0];
+            $decodedTargetUrl = \preg_replace(
+                "#/$currentStoreCode#",
+                "/$targetStoreCode",
+                $decodedTargetUrl,
+                1
+            );
         }
         $targetUrl = $this->urlEncoder->encode($decodedTargetUrl);
         return $targetUrl;
